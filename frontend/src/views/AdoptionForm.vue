@@ -1,12 +1,11 @@
 <template>
   <div class="contact-container">
     <div class="contact-wrapper">
-      
       <div class="contact-info">
         <h2>Formulario de Adopcion</h2>
         <p>Completa los datos a continuacion para solicitar la adopcion.</p>
         <ul>
-          <li><strong>Teléfono:</strong>310593760</li>
+          <li><strong>Teléfono:</strong>3103933668</li>
           <li><strong>Correo:</strong> info@adopciondegatos.com</li>
           <li><strong>Ubicación:</strong> Cartagena, Colombia</li>
         </ul>
@@ -88,12 +87,12 @@
   </div>
 </template>
 
-
 <script>
 import axios from 'axios';
 
 export default {
   name: 'AdoptionForm',
+  props: ['petId', 'petType'],
   data() {
     return {
       name: '',
@@ -102,11 +101,13 @@ export default {
       address: '',
       reason: '',
       dni: '',
-      catId: null,
+      petId: null,
+      petType: '', 
     };
   },
   mounted() {
-    this.catId = this.$route.params.catId;
+    this.petId = this.$route.params.petId;
+    this.petType = this.$route.params.petType; 
   },
   methods: {
     async handleSubmit() {
@@ -117,7 +118,8 @@ export default {
         address: this.address,
         reason: this.reason,
         dni: this.dni,
-        catId: this.catId,
+        petId: this.petId,
+        petType: this.petType, // Incluir petType en los datos enviados
       };
       try {
         const response = await axios.post('http://localhost:5000/api/adoption', adoptionData);
@@ -136,7 +138,7 @@ export default {
       this.phone = '';
       this.address = '';
       this.reason = '';
-      this.dni = ''
+      this.dni = '';
     },
   },
 };

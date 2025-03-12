@@ -48,7 +48,7 @@ export default {
         breed: '',
         age: '',
         description: '',
-        tipo: 'cat', // Valor por defecto: gato
+        tipo: 'cat', 
       },
     };
   },

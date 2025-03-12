@@ -14,13 +14,13 @@
         <label for="password">Contraseña:</label>
         <input type="password" id="password" v-model="password" required />
       </div>
-      <!-- <div>
+      <div>
         <label for="role">Rol:</label>
         <select v-model="role" id="role">
           <option value="user">Usuario</option>
           <option value="admin">Administrador</option>
         </select>
-      </div> -->
+      </div>
       <button type="submit">Registrarse</button>
     </form>
   </div>

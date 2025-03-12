@@ -290,4 +290,13 @@ export default {
     font-size: 1.2rem;
   }
 }
+
+.pets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center; /* Asegura que las tarjetas se centren */
+}
+
+
 </style>

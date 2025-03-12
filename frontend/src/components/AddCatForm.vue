@@ -32,6 +32,32 @@
           </select>
         </div>
         <div class="form-group">
+          <label for="age" class="form-label">Edad</label>
+          <input
+            type="number"
+            id="age"
+            v-model="mascota.age"
+            class="form-control"
+            required
+            placeholder="Escribe la edad de la mascota"
+          />
+        </div>
+        <div class="form-group">
+          <label for="vaccinated" class="form-label">Vacunado</label>
+          <select id="vaccinated" v-model="mascota.vaccinated" class="form-control" required>
+            <option value="true">Sí</option>
+            <option value="false">No</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="size" class="form-label">Tamaño</label>
+          <select id="size" v-model="mascota.size" class="form-control" required>
+            <option value="small">Pequeño</option>
+            <option value="medium">Mediano</option>
+            <option value="large">Grande</option>
+          </select>
+        </div>
+        <div class="form-group">
           <label for="image" class="form-label">Imagen</label>
           <input
             type="file"
@@ -50,13 +76,16 @@
 import axios from 'axios';
 
 export default {
-  name: 'AddCatForm', // Puedes renombrarlo a AddPetForm si lo prefieres
+  name: 'AddCatForm', 
   data() {
     return {
       mascota: {
         name: '',
         description: '',
-        type: 'cat', // Valor predeterminado: 'cat'
+        type: 'cat', 
+        age: '', 
+        vaccinated: 'true', 
+        size: 'small', 
       },
       image: null,
     };
@@ -67,6 +96,9 @@ export default {
       formData.append('name', this.mascota.name);
       formData.append('description', this.mascota.description);
       formData.append('type', this.mascota.type);
+      formData.append('age', this.mascota.age);
+      formData.append('vaccinated', this.mascota.vaccinated);
+      formData.append('size', this.mascota.size);
       if (this.image) {
         formData.append('image', this.image);
       }
@@ -81,7 +113,7 @@ export default {
         });
         alert('Mascota agregada exitosamente');
         // Reinicia el formulario
-        this.mascota = { name: '', description: '', type: 'cat' };
+        this.mascota = { name: '', description: '', type: 'cat', age: '', vaccinated: 'true', size: 'small' };
         this.image = null;
       } catch (error) {
         console.error('Error al agregar la mascota:', error);

@@ -3,7 +3,7 @@ const Pet = require('../models/Pet'); // Modelo de mascota (gatos y perros)
 
 const createAdoption = async (req, res) => {
   try {
-    const { name, email, phone, address, reason, dni, petId } = req.body;
+    const { name, email, phone, address, reason, dni, petId , petType } = req.body;
     
     // Verificar que la mascota existe
     const pet = await Pet.findById(petId);
@@ -19,7 +19,8 @@ const createAdoption = async (req, res) => {
       address,
       reason,
       dni,
-      petId
+      petId,
+      petType,
     });
 
     await newAdoption.save();

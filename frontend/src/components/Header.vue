@@ -36,41 +36,4 @@ export default {
 
 
 
-<!-- <style scoped>
-header {
-  background-color: #333;
-  padding: 10px;
-  color: white;
-  justify-content: space-between;
-  text-align: center;
-}
 
-nav{
-  display: flex;
-  align-items: center;
-}
-
-nav a {
-  margin: 0 10px;
-  color: white;
-  text-decoration: none;
-}
-
-nav a.auth-link {
-  font-size: 0.9rem; 
-}
-
-
-nav button {
-  background-color: #ff4b4b;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-}
-
-nav button {
-  margin-left: auto;
-}
- -->
-</style>
