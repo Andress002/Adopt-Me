@@ -1,36 +1,39 @@
 <template>
   <div class="about-container">
-    <section class="hero">
+    <!-- Sección Hero -->
+    <section class="hero fade-in">
       <div class="hero-content">
-        <h1>Adopción de Gatos</h1>
+        <h1>Sobre Nosotros</h1>
         <p class="tagline">Cambiando vidas, un gato a la vez</p>
       </div>
     </section>
 
-    <section class="mission">
+    <!-- Sección Misión -->
+    <section class="mission fade-in">
       <div class="section-content">
-        <h2>Nuestra Mision</h2>
+        <h2>Nuestra Misión</h2>
         <p>
-          En Adopcion de Gatos, transformamos esperanza en hogar. Cada gato merece amor, 
+          En Mundo Gatuno, transformamos esperanza en hogar. Cada gato merece amor, 
           seguridad y una familia que lo acoja con los brazos abiertos. Trabajamos incansablemente 
-          para convertir momentos de soledad en historias de conexiin y cariño.
+          para convertir momentos de soledad en historias de conexión y cariño.
         </p>
       </div>
     </section>
 
-    <section class="why-adopt">
+    <!-- Sección ¿Por Qué Adoptar? -->
+    <section class="why-adopt fade-in">
       <div class="section-content">
         <h2>¿Por Qué Adoptar?</h2>
         <div class="reasons-grid">
           <div class="reason-card">
             <i class="icon heart"></i>
             <h3>Amor Incondicional</h3>
-            <p>Los gatos ofrecen compañia y cariño sin limites.</p>
+            <p>Los gatos ofrecen compañía y cariño sin límites.</p>
           </div>
           <div class="reason-card">
             <i class="icon home"></i>
             <h3>Segundo Hogar</h3>
-            <p>Cada adopcion es una nueva oportunidad de vida.</p>
+            <p>Cada adopción es una nueva oportunidad de vida.</p>
           </div>
           <div class="reason-card">
             <i class="icon community"></i>
@@ -41,96 +44,70 @@
       </div>
     </section>
 
-    <section class="values">
+    <!-- Sección Valores -->
+    <section class="values fade-in">
       <div class="section-content">
         <h2>Nuestros Valores</h2>
         <ul class="values-list">
           <li>
             <span class="value-icon">💖</span>
-            <strong>Cuidado y Compasion</strong>
+            <strong>Cuidado y Compasión</strong>
             <p>Cada gato recibe amor y atención personalizada.</p>
           </li>
           <li>
             <span class="value-icon">🤝</span>
             <strong>Transparencia</strong>
-            <p>Comunicacion clara y honesta en cada paso.</p>
+            <p>Comunicación clara y honesta en cada paso.</p>
           </li>
           <li>
             <span class="value-icon">🏠</span>
             <strong>Compromiso</strong>
-            <p>Dedicacion total para encontrar el hogar perfecto.</p>
+            <p>Dedicación total para encontrar el hogar perfecto.</p>
           </li>
         </ul>
       </div>
     </section>
 
-    <section class="testimonials">
+    <!-- Sección Testimonios -->
+    <section class="testimonials fade-in">
       <div class="section-content">
-        <h2>Historias de Adopcion</h2>
+        <h2>Historias de Adopción</h2>
         <div class="testimonial-carousel">
           <div class="testimonial-card">
             <img src="../assets/images/testimonio1.jpg" alt="Juan y María">
             <blockquote>
-              "Adoptar a nuestro gato ha sido transformador. El equipo nos guio con profesionalismo y amor."
+              "Adoptar a nuestro gato ha sido transformador. El equipo nos guió con profesionalismo y amor."
             </blockquote>
-            <p class="testimonial-author">- Juan </p>
+            <p class="testimonial-author">- Juan</p>
           </div>
           <div class="testimonial-card">
             <img src="../assets/images/testimonio2.jpg" alt="Laura">
             <blockquote>
-              "Nuestro nuevo amigo peludo ha llenado de alegria nuestro hogar. ¡Gracias Mundo Gatuno!"
+              "Nuestro nuevo amigo peludo ha llenado de alegría nuestro hogar. ¡Gracias Mundo Gatuno!"
             </blockquote>
             <p class="testimonial-author">- Laura</p>
           </div>
         </div>
       </div>
     </section>
-
-    <section class="analysis-table">
-      <div class="section-content">
-        <h2>Tabla de Analisis</h2>
-        <img src="../assets/images/datosImportantess.JPG" alt="Tabla de analisis">
-
-      </div>
-    </section>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'AboutPage',
-}
-</script>
-
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
-
 :root {
-  --primary-color: #6A5ACD;
-  --secondary-color: #8A4FFF;
-  --text-color: #2C3E50;
-  --background-color: #F4F6F9;
-}
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+  --primary-color: #FF6600; /* Naranja principal */
+  --secondary-color: #FFA07A; /* Naranja suave */
+  --text-color: #2C3E50; /* Texto oscuro */
+  --background-color-light: #FFFFFF; /* Blanco puro */
+  --background-color-dark: #F4F6F9; /* Blanco más oscuro */
 }
 
 .about-container {
   font-family: 'Poppins', sans-serif;
-  background-color: var(--background-color);
-  color: var(--text-color);
   line-height: 1.6;
 }
 
-.section-content {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 3rem 1rem;
-}
-
+/* Hero Section */
 .hero {
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
   color: white;
@@ -141,32 +118,32 @@ export default {
 .hero-content h1 {
   font-size: 3.5rem;
   font-weight: 700;
-  margin-bottom: 1rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
 }
 
 .hero-content .tagline {
   font-size: 1.5rem;
-  opacity: 0.9;
+}
+
+/* Alternancia de fondos */
+section:nth-child(odd) {
+  background-color: var(--background-color-light);
+}
+
+section:nth-child(even) {
+  background-color: var(--background-color-dark);
+}
+
+/* Contenido general */
+.section-content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 3rem 1rem;
 }
 
 h2 {
   font-size: 2.5rem;
-  text-align: center;
   color: var(--primary-color);
-  margin-bottom: 2rem;
-  position: relative;
-}
-
-h2::after {
-  content: '';
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  width: 100px;
-  height: 4px;
-  background: var(--primary-color);
-  transform: translateX(-50%);
+  text-align: center;
 }
 
 .reasons-grid {
@@ -180,65 +157,71 @@ h2::after {
   padding: 2rem;
   text-align: center;
   border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.reason-card:hover {
-  transform: translateY(-10px);
+.reason-card img {
+  width: 80%;
+  border-radius: 10px;
 }
 
 .values-list {
   display: flex;
   justify-content: space-between;
-  list-style: none;
 }
 
 .values-list li {
   flex: 1;
-  text-align: center;
   padding: 1.5rem;
   background: white;
+  border-radius: 15px;
   margin: 0 1rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
-
-.testimonial-carousel {
-  display: flex;
-  gap: 2rem;
-}
-
-.testimonial-card {
-  flex: 1;
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
-  text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .testimonial-card img {
-  width: 120px;
-  height: 120px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 1rem;
 }
 
-.analysis-table img {
-  width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
+/* Animación Fade In */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
 }
 
+.fade-in.appear {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
-  .reasons-grid, 
-  .values-list, 
-  .testimonial-carousel {
+  .reasons-grid {
     grid-template-columns: 1fr;
+  }
+  .values-list {
     flex-direction: column;
   }
 }
 </style>
+
+<script>
+export default {
+  mounted() {
+    const elements = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('appear');
+        }
+      });
+    }, { threshold: 0.3 });
+    elements.forEach(el => observer.observe(el));
+  }
+};
+</script>

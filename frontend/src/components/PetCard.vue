@@ -9,7 +9,7 @@
     </div>
     <div class="card-body">
       <h5 class="card-title">{{ pet.name }}</h5>
-      <p class="card-text">{{ pet.description }}</p>
+      <p class="card-text"><strong>Descripcion:</strong> {{ pet.description }}</p>
       <p class="card-text"><strong>Edad:</strong> {{ pet.age }} años</p>
       <p class="card-text"><strong>Vacunado:</strong> {{ pet.vaccinated ? 'Sí' : 'No' }}</p>
       <p class="card-text"><strong>Tamaño:</strong> {{ getSizeLabel(pet.size) }}</p>

@@ -1,6 +1,7 @@
 <template>
   <div class="home-container">
-    <section class="hero-section">
+    <!-- Sección Hero -->
+    <section class="hero-section fade-in">
       <div class="hero-overlay"></div>
       <div class="hero-content">
         <div class="hero-text">
@@ -11,49 +12,42 @@
           </div>
         </div>
         <div class="hero-image">
-          <img src="../assets/images/Two little cutie pies_.jpeg" alt="Gato o perro en adopción" />
+          <img src="../assets/images/fondohome.jpg" alt="Gato o perro en adopción" />
         </div>
       </div>
     </section>
 
-    <section class="pets-gallery">
+    <!-- Sección Galería de Mascotas -->
+    <section class="pets-gallery fade-in">
       <div class="container">
         <h2 class="section-title">Mascotas Esperando un Hogar</h2>
         <div class="pets-grid">
-          <div 
-            v-for="pet in pets" 
-            :key="pet._id" 
-            class="pet-card"
-          >
-            <PetCard 
-              :pet="pet" 
-              :showAdoptButton="isUser" 
-              @pet-deleted="removePet" 
-            />
+          <div v-for="pet in pets" :key="pet._id" class="pet-card">
+            <PetCard :pet="pet" :showAdoptButton="isUser" @pet-deleted="removePet" />
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Proceso de Adopción -->
-    <section class="adoption-process">
+    <!-- Sección Proceso de Adopción -->
+    <section class="adoption-process fade-in">
       <div class="container">
-        <h2 class="section-title">Proceso de Adopcion</h2>
+        <h2 class="section-title">Proceso de Adopción</h2>
         <div class="process-steps">
           <div class="process-step">
             <div class="step-icon">1</div>
             <h3>Explora</h3>
-            <p>Navega por nuestra galeria de mascotas y encuentra tu compañero ideal.</p>
+            <p>Navega por nuestra galería de mascotas y encuentra tu compañero ideal.</p>
           </div>
           <div class="process-step">
             <div class="step-icon">2</div>
             <h3>Contacta</h3>
-            <p>Contactanos para conocer más detalles sobre la mascota que te interesa.</p>
+            <p>Contáctanos para conocer más detalles sobre la mascota que te interesa.</p>
           </div>
           <div class="process-step">
             <div class="step-icon">3</div>
             <h3>Adopta</h3>
-            <p>Completa nuestro proceso de adopcion y lleva a tu nuevo amigo a casa.</p>
+            <p>Completa nuestro proceso de adopción y lleva a tu nuevo amigo a casa.</p>
           </div>
         </div>
       </div>
@@ -62,24 +56,21 @@
 </template>
 
 <script>
-import PetCard from '../components/PetCard.vue'; // Asegúrate de que el PetCard funcione para gatos y perros
+import PetCard from '../components/PetCard.vue';
 import axios from 'axios';
 
 export default {
   name: 'Home',
-  components: {
-    PetCard
-  },
+  components: { PetCard },
   data() {
     return {
-      pets: [], // Ahora tenemos una lista general de mascotas
+      pets: [],
       isUser: false
     };
   },
   methods: {
     async fetchPets() {
       try {
-        // Llamada a la API para obtener tanto gatos como perros
         const response = await axios.get('http://localhost:5000/api/pets');
         this.pets = response.data;
       } catch (error) {
@@ -95,34 +86,39 @@ export default {
     }
   },
   mounted() {
-    this.fetchPets(); // Ahora obtienes tanto gatos como perros
+    this.fetchPets();
     this.checkUserRole();
+    
+    const fadeEls = document.querySelectorAll('.fade-in');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('appear');
+        }
+      });
+    }, { threshold: 0.3 });
+    fadeEls.forEach(el => observer.observe(el));
   }
 };
 </script>
-
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-  --primary-color: #6A5ACD;
-  --secondary-color: #8A4FFF;
+  --primary-color: #FF6600;
+  --secondary-color: #FFA07A;
   --text-color: #2C3E50;
   --background-color: #F4F6F9;
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
+/* Contenedor general */
 .home-container {
   font-family: 'Poppins', sans-serif;
   background-color: var(--background-color);
 }
 
+/* Sección Hero */
 .hero-section {
   position: relative;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
@@ -130,7 +126,6 @@ export default {
   padding: 6rem 0;
   overflow: hidden;
 }
-
 .hero-overlay {
   position: absolute;
   top: 0;
@@ -139,7 +134,6 @@ export default {
   bottom: 0;
   background: rgba(0,0,0,0.3);
 }
-
 .hero-content {
   display: flex;
   align-items: center;
@@ -149,100 +143,93 @@ export default {
   position: relative;
   z-index: 1;
   padding: 0 2rem;
+  flex-wrap: wrap;
 }
-
 .hero-text {
   flex: 1;
   padding-right: 3rem;
 }
-
 .hero-text h1 {
   font-size: 3.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
+  color: var(--text-color);
 }
-
 .hero-text p {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   opacity: 0.9;
 }
-
 .hero-cta {
   display: flex;
   gap: 1rem;
 }
-
 .btn {
   display: inline-block;
   padding: 12px 24px;
   border-radius: 8px;
   text-decoration: none;
   font-weight: 600;
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
 }
-
 .btn-adopt {
   background-color: white;
   color: var(--primary-color);
 }
-
-.btn-explore {
-  background-color: transparent;
-  border: 2px solid white;
-  color: white;
-}
-
 .btn:hover {
   transform: scale(1.05);
 }
-
 .hero-image {
   flex: 1;
   text-align: right;
+  display: flex;
+  justify-content: center;
 }
-
 .hero-image img {
-  max-width: 100%;
+  max-width: 450px;
+  width: 100%;
   height: auto;
-  border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  border-radius: 20px; /* Bordes redondeados */
+  transition: transform 0.3s ease;
+}
+.hero-image img:hover {
+  transform: scale(1.05);
 }
 
-.cats-gallery, .adoption-process {
+/* Pets Gallery */
+.pets-gallery {
   padding: 6rem 0;
   background: white;
 }
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 2rem;
 }
-
 .section-title {
   text-align: center;
   font-size: 2.5rem;
   margin-bottom: 3rem;
   color: var(--primary-color);
 }
-
-.cats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+.pets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 }
 
+/* Adoption Process */
 .adoption-process {
   background-color: var(--background-color);
+  padding: 6rem 0;
 }
-
 .process-steps {
   display: flex;
   justify-content: space-between;
   gap: 2rem;
+  flex-wrap: wrap;
 }
-
 .process-step {
   flex: 1;
   text-align: center;
@@ -250,8 +237,14 @@ export default {
   padding: 2rem;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 350px;
+  margin: 0 auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-
+.process-step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
+}
 .step-icon {
   width: 70px;
   height: 70px;
@@ -266,37 +259,39 @@ export default {
   font-weight: 700;
 }
 
+/* Animación Fade In */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+.fade-in.appear {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
   .hero-content,
-  .cats-grid,
+  .pets-grid,
   .process-steps {
     flex-direction: column;
     align-items: center;
   }
-
-  .hero-text, 
-  .hero-image {
+  .hero-text, .hero-image {
     flex: none;
     width: 100%;
     text-align: center;
     padding-right: 0;
   }
-
   .hero-text h1 {
     font-size: 2.5rem;
   }
-
   .hero-text p {
     font-size: 1.2rem;
   }
+  .hero-image img {
+    max-width: 300px;
+  }
 }
-
-.pets-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
-  justify-content: center; /* Asegura que las tarjetas se centren */
-}
-
-
 </style>

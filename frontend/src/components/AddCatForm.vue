@@ -2,6 +2,12 @@
   <div class="container mt-5">
     <div class="form-container">
       <h2 class="form-title">Agregar una Nueva Mascota</h2>
+
+      <div v-if="successMessage" class="success-message">
+        {{ successMessage }}
+      </div>
+
+
       <form @submit.prevent="addMascota">
         <div class="form-group">
           <label for="name" class="form-label">Nombre</label>

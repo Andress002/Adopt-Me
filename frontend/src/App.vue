@@ -55,11 +55,11 @@ export default {
 
 <style>
 :root {
-  --primary-color: #333333; /* Gris oscuro para el header */
+  --primary-color: #353839; /* Gris oscuro para el header */
   --secondary-color: #E5E5E5; /* Blanco Oscuro (Gris Claro) */
   --link-hover-color: #D44D4D; /* Rojo suave al pasar el mouse */
   --button-bg: #D44D4D; /* Rojo suave para los botones */
-  --button-hover-bg: #B53939; /* Rojo más oscuro al pasar el mouse */
+  --button-hover-bg: #820e0e; /* Rojo más oscuro al pasar el mouse */
   --header-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Sombra suave en el header */
 }
 

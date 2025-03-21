@@ -3,66 +3,66 @@
     <div class="contact-wrapper">
       <div class="contact-info">
         <h2>Contáctanos</h2>
-        <p>¿Tienes preguntas sobre adopción? Estamos aqui para ayudarte.</p>
+        <p>¿Tienes preguntas sobre adopción? Estamos aquí para ayudarte.</p>
         <div class="contact-details">
           <div class="contact-detail">
-            <i class="icon-phone"></i>
+            <i class="icon-phone" aria-label="Teléfono"></i>
             <span>3105923760</span>
           </div>
           <div class="contact-detail">
-            <i class="icon-mail"></i>
+            <i class="icon-mail" aria-label="Correo Electrónico"></i>
             <span>MundoGatuno@gmail.com</span>
           </div>
           <div class="contact-detail">
-            <i class="icon-location"></i>
+            <i class="icon-location" aria-label="Ubicación"></i>
             <span>Cartagena, Colombia</span>
           </div>
         </div>
       </div>
       <div class="contact-form">
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="handleForm">
           <div class="form-group">
-            <label for="name">Nombre Completo</label>
             <div class="input-wrapper">
-              <i class="icon-user"></i>
               <input
                 id="name"
                 type="text"
                 v-model="name"
-                placeholder="Ingresa tu nombre"
+                placeholder=" "
                 required
               />
+              <label for="name">Nombre Completo</label>
+              <i class="icon-user"></i>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <label for="email">Correo Electronico</label>
             <div class="input-wrapper">
-              <i class="icon-envelope"></i>
               <input
                 id="email"
                 type="email"
                 v-model="email"
-                placeholder="Ingresa tu email"
+                placeholder=" "
                 required
               />
+              <label for="email">Correo Electrónico</label>
+              <i class="icon-envelope"></i>
             </div>
           </div>
-          
+
           <div class="form-group">
-            <label for="message">Tu Mensaje</label>
             <div class="input-wrapper">
-              <i class="icon-chat"></i>
               <textarea
                 id="message"
                 v-model="message"
-                placeholder="Escribe tu mensaje"
+                placeholder=" "
                 rows="4"
                 required
               ></textarea>
+              <label for="message">Tu Mensaje</label>
+              <i class="icon-chat"></i>
             </div>
           </div>
-          
+
           <button type="submit" class="btn-submit">
             <span>Enviar Mensaje</span>
             <i class="icon-send"></i>
@@ -86,7 +86,30 @@ export default {
     };
   },
   methods: {
-    async handleSubmit() {
+    validateInput() {
+      if (!this.name.trim() || !this.email.trim() || !this.message.trim()) {
+        this.$swal.fire({
+          icon: 'warning',
+          title: 'Campos incompletos',
+          text: 'Por favor, rellena todos los campos antes de enviar.',
+          confirmButtonColor: '#6A5ACD',
+        });
+        return false;
+      }
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailPattern.test(this.email)) {
+        this.$swal.fire({
+          icon: 'warning',
+          title: 'Email inválido',
+          text: 'Por favor, ingresa un correo válido.',
+          confirmButtonColor: '#6A5ACD',
+        });
+        return false;
+      }
+      return true;
+    },
+    async handleForm() {
+      if (!this.validateInput()) return;
       try {
         await axios.post('http://localhost:5000/api/contact', {
           name: this.name,
@@ -97,17 +120,18 @@ export default {
           icon: 'success',
           title: `Gracias, ${this.name}`,
           text: 'Tu mensaje ha sido enviado exitosamente',
-          confirmButtonColor: '#6A5ACD'
+          confirmButtonColor: '#6A5ACD',
         });
         this.name = '';
         this.email = '';
         this.message = '';
       } catch (error) {
+        const errorMsg = error.response?.data?.message || 'Error desconocido al enviar el mensaje.';
         this.$swal.fire({
           icon: 'error',
           title: 'Oops...',
-          text: 'Ocurrio un error al enviar el mensaje. Intentalo nuevamente.',
-          confirmButtonColor: '#6A5ACD'
+          text: errorMsg,
+          confirmButtonColor: '#6A5ACD',
         });
       }
     },
@@ -139,7 +163,7 @@ export default {
   display: flex;
   background: white;
   border-radius: 20px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   max-width: 1100px;
   width: 100%;
@@ -148,11 +172,17 @@ export default {
 .contact-info {
   flex: 1;
   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  animation: gradientShift 5s infinite alternate;
   color: white;
   padding: 4rem 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 
 .contact-info h2 {
@@ -168,6 +198,14 @@ export default {
   display: flex;
   align-items: center;
   margin-bottom: 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1rem;
+  border-radius: 10px;
+  transition: transform 0.3s ease;
+}
+
+.contact-detail:hover {
+  transform: translateY(-5px);
 }
 
 .contact-detail i {
@@ -182,25 +220,17 @@ export default {
 
 .form-group {
   margin-bottom: 1.5rem;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: var(--text-color);
-}
-
-.input-wrapper {
   position: relative;
 }
 
-.input-wrapper i {
+label {
   position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--primary-color);
-  opacity: 0.7;
+  top: 12px;
+  left: 40px;
+  font-size: 0.9rem;
+  color: gray;
+  transition: 0.3s ease;
+  pointer-events: none;
 }
 
 input, textarea {
@@ -212,10 +242,18 @@ input, textarea {
   transition: all 0.3s ease;
 }
 
+input:focus + label, textarea:focus + label,
+input:not(:placeholder-shown) + label, textarea:not(:placeholder-shown) + label {
+  top: -10px;
+  left: 20px;
+  font-size: 0.75rem;
+  color: var(--primary-color);
+}
+
 input:focus, textarea:focus {
   border-color: var(--primary-color);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(106, 90, 205, 0.1);
+  box-shadow: 0 0 10px rgba(138, 79, 255, 0.5);
 }
 
 .btn-submit {
@@ -231,16 +269,23 @@ input:focus, textarea:focus {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: background 0.3s ease;
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
 .btn-submit:hover {
   background: var(--secondary-color);
+  transform: scale(1.05);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 480px) {
   .contact-wrapper {
     flex-direction: column;
+    border-radius: 0;
+  }
+
+  .contact-info {
+    text-align: center;
+    padding: 2rem;
   }
 }
 </style>
