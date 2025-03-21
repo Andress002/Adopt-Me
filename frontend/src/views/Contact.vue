@@ -7,11 +7,11 @@
         <div class="contact-details">
           <div class="contact-detail">
             <i class="icon-phone" aria-label="Teléfono"></i>
-            <span>3105923760</span>
+            <span>3103450342</span>
           </div>
           <div class="contact-detail">
             <i class="icon-mail" aria-label="Correo Electrónico"></i>
-            <span>MundoGatuno@gmail.com</span>
+            <span>AdoptMe@gmail.com</span>
           </div>
           <div class="contact-detail">
             <i class="icon-location" aria-label="Ubicación"></i>
@@ -23,13 +23,7 @@
         <form @submit.prevent="handleForm">
           <div class="form-group">
             <div class="input-wrapper">
-              <input
-                id="name"
-                type="text"
-                v-model="name"
-                placeholder=" "
-                required
-              />
+              <input id="name" type="text" v-model="name" placeholder=" " required />
               <label for="name">Nombre Completo</label>
               <i class="icon-user"></i>
             </div>
@@ -37,13 +31,7 @@
 
           <div class="form-group">
             <div class="input-wrapper">
-              <input
-                id="email"
-                type="email"
-                v-model="email"
-                placeholder=" "
-                required
-              />
+              <input id="email" type="email" v-model="email" placeholder=" " required />
               <label for="email">Correo Electrónico</label>
               <i class="icon-envelope"></i>
             </div>
@@ -51,13 +39,7 @@
 
           <div class="form-group">
             <div class="input-wrapper">
-              <textarea
-                id="message"
-                v-model="message"
-                placeholder=" "
-                rows="4"
-                required
-              ></textarea>
+              <textarea id="message" v-model="message" placeholder=" " rows="4" required></textarea>
               <label for="message">Tu Mensaje</label>
               <i class="icon-chat"></i>
             </div>
@@ -87,57 +69,46 @@ export default {
   },
   methods: {
     validateInput() {
+      console.log('Validando input...');
       if (!this.name.trim() || !this.email.trim() || !this.message.trim()) {
-        this.$swal.fire({
-          icon: 'warning',
-          title: 'Campos incompletos',
-          text: 'Por favor, rellena todos los campos antes de enviar.',
-          confirmButtonColor: '#6A5ACD',
-        });
+        alert('Por favor, rellena todos los campos antes de enviar.');
         return false;
       }
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(this.email)) {
-        this.$swal.fire({
-          icon: 'warning',
-          title: 'Email inválido',
-          text: 'Por favor, ingresa un correo válido.',
-          confirmButtonColor: '#6A5ACD',
-        });
+        alert('Por favor, ingresa un correo válido.');
         return false;
       }
       return true;
     },
     async handleForm() {
+      console.log('Intentando enviar formulario...');
       if (!this.validateInput()) return;
+
       try {
-        await axios.post('http://localhost:5000/api/contact', {
+        console.log('Enviando datos a la API...');
+        const response = await axios.post('http://localhost:5000/api/contact', {
           name: this.name,
           email: this.email,
           message: this.message,
         });
-        this.$swal.fire({
-          icon: 'success',
-          title: `Gracias, ${this.name}`,
-          text: 'Tu mensaje ha sido enviado exitosamente',
-          confirmButtonColor: '#6A5ACD',
-        });
+        
+        console.log('Respuesta del servidor:', response.data);
+
+        alert(`Gracias, ${this.name}. Tu mensaje ha sido enviado exitosamente`);
+        
         this.name = '';
         this.email = '';
         this.message = '';
       } catch (error) {
-        const errorMsg = error.response?.data?.message || 'Error desconocido al enviar el mensaje.';
-        this.$swal.fire({
-          icon: 'error',
-          title: 'Oops...',
-          text: errorMsg,
-          confirmButtonColor: '#6A5ACD',
-        });
+        console.error('Error al enviar el mensaje:', error);
+        alert('Hubo un problema al enviar el mensaje.');
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');

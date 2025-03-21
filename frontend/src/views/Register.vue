@@ -15,11 +15,13 @@
         <input type="password" id="password" v-model="password" required />
       </div>
       <div>
-        <label for="role">Rol:</label>
+        <!-- activas esto para crear la cuenta admin, lo seleccionas todo y le das alt + shift + A , y ya despues lo desactivas -->
+
+        <!-- <label for="role">Rol:</label>
         <select v-model="role" id="role">
           <option value="user">Usuario</option>
           <option value="admin">Administrador</option>
-        </select>
+        </select> -->  
       </div>
       <button type="submit">Registrarse</button>
     </form>
@@ -96,3 +98,4 @@ export default {
     cursor: pointer;
   }
 </style>
+
