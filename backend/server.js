@@ -35,6 +35,9 @@ app.use('/api/auth', authRoutes);
 const adoptionsRoutes = require('./routes/adoption');
 app.use('/api/adoption' , adoptionsRoutes);
 
+const predictorRoute = require('./routes/predictor');
+app.use('/api/predictor' , predictorRoute);
+
 app.get('/', (req, res) => {
   res.send('¡Bienvenido a la API de Adopción de Mascotas! 🐱🐶');
 });
