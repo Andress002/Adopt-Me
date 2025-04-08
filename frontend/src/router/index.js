@@ -6,6 +6,7 @@ import Admin from '../views/Admin.vue';
 import Register from '../views/Register.vue';
 import Login from '../views/Login.vue';
 import AdoptionForm from '../views/AdoptionForm.vue';
+import ArffPredictor from '../components/ArffPredictor.vue';
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -14,7 +15,8 @@ const routes = [
   { path: '/register', name: 'Register', component: Register },
   { path: '/login', name: 'Login', component: Login },
   { path: '/admin', name: 'Admin', component: Admin, meta: { requiresAuth: true } },
-  { path: '/adopt/:petId/:petType', name: 'AdoptionForm', component: AdoptionForm, props: true }, // Añadir petType como parámetro
+  { path: '/adopt/:petId/:petType', name: 'AdoptionForm', component: AdoptionForm, props: true },
+  { path: '/predictor', name: 'Predictor', component: ArffPredictor }, // 👈 Cambio aquí
 ];
 
 const router = createRouter({

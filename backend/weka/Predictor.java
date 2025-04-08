@@ -1,16 +1,19 @@
-
-import weka.classifiers.trees.J48;
+import weka.classifiers.Classifier;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.core.SerializationHelper;
 
 public class Predictor {
     public static void main(String[] args) throws Exception {
-        if (args.length == 0) {
-            System.out.println("Por favor, proporciona la ruta del archivo .arff");
+        if (args.length != 2) {
+            System.out.println("Uso: java Predictor <modelo.model> <archivo.arff>");
             return;
         }
 
-        String datasetPath = args[0];
+        String modelPath = args[0];
+        String datasetPath = args[1];
+
+        Classifier model = (Classifier) SerializationHelper.read(modelPath);
 
         DataSource source = new DataSource(datasetPath);
         Instances data = source.getDataSet();
@@ -19,14 +22,10 @@ public class Predictor {
             data.setClassIndex(data.numAttributes() - 1);
         }
 
-        J48 tree = new J48();
-        tree.buildClassifier(data);
-
         for (int i = 0; i < data.numInstances(); i++) {
-            double pred = tree.classifyInstance(data.instance(i));
+            double pred = model.classifyInstance(data.instance(i));
             String predClass = data.classAttribute().value((int) pred);
             System.out.println("Instancia " + (i + 1) + " -> Predicción: " + predClass);
         }
     }
 }
-

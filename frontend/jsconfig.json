@@ -11,6 +11,7 @@
   ],
   "exclude": [
     "node_modules",
-    "src/components/AddCat.vue"  
+    "src/components/AddCat.vue",
+    "src/views/PredictorView.vue"
   ]
 }
