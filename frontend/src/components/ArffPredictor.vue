@@ -7,8 +7,8 @@
     <div v-if="resultado && Object.keys(estadisticas.porcentajePorRaza).length">
       <h3 class="text-xl font-semibold mt-4">Sexo (%):</h3>
       <ul class="ml-4">
-        <li>♂️ Male: {{ estadisticas.porcentajePorSexo.Male || '0%' }}</li>
-        <li>♀️ Female: {{ estadisticas.porcentajePorSexo.Female || '0%' }}</li>
+        <li>♂️ Male: {{ estadisticas.porcentajePorSexoPredicho?.Male || '0%' }}</li>
+        <li>♀️ Female: {{ estadisticas.porcentajePorSexoPredicho?.Female || '0%' }}</li>
       </ul>
 
       <h3 class="text-xl font-semibold mt-4">Razas (%):</h3>

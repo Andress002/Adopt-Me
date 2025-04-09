@@ -7,44 +7,21 @@ const multer = require('multer');
 const fs = require('fs');
 
 // Arrays de mapeo
-const razas = [
-  'Russian Blue', 'Norwegian Forest', 'Chartreux', 'Persian', 'Ocicat',
-  'Ragdoll', 'Abyssinian', 'Oriental', 'Egyptian Mau', 'American Shorthair',
-  'Bengal', 'Cornish Rex', 'British Shorthair', 'Burmese', 'Singapura',
-  'Maine Coon', 'Turkish Angora', 'Himalayan', 'Sphynx', 'Manx', 'Birman',
-  'Siberian'
-];
-
-const colores = [
-  'Tortoiseshell', 'Brown', 'Sable', 'Tabby', 'Blue', 'Calico', 'White',
-  'Black', 'Red', 'Pointed', 'Tricolor', 'Cream'
-];
-
+const razas = [ 'Russian Blue', 'Norwegian Forest', 'Chartreux', 'Persian', 'Ocicat', 'Ragdoll', 'Abyssinian', 'Oriental', 'Egyptian Mau', 'American Shorthair', 'Bengal', 'Cornish Rex', 'British Shorthair', 'Burmese', 'Singapura', 'Maine Coon', 'Turkish Angora', 'Himalayan', 'Sphynx', 'Manx', 'Birman', 'Siberian' ];
+const colores = [ 'Tortoiseshell', 'Brown', 'Sable', 'Tabby', 'Blue', 'Calico', 'White', 'Black', 'Red', 'Pointed', 'Tricolor', 'Cream' ];
 const sexos = ['Female', 'Male'];
-
-// Función auxiliar para obtener un valor seguro desde un array
-function safeGet(array, value) {
-  const index = parseInt(value);
-  return array.includes(value)
-    ? value
-    : (!isNaN(index) && array[index]) || 'Desconocido';
-}
 
 const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
 
 router.post('/', upload.single('file'), (req, res) => {
-  if (!req.file) {
-    return res.status(400).json({ error: 'No se ha subido ningún archivo .arff' });
-  }
+  if (!req.file) return res.status(400).json({ error: 'No se ha subido ningún archivo .arff' });
 
   const tempPath = req.file.path;
   const wekaPath = path.join(__dirname, '..', 'weka');
   const finalPath = path.join(wekaPath, 'entrada.arff');
 
   fs.rename(tempPath, finalPath, (err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Error al preparar el archivo .arff' });
-    }
+    if (err) return res.status(500).json({ error: 'Error al preparar el archivo .arff' });
 
     fs.readFile(finalPath, 'utf8', (err, data) => {
       if (err) return res.status(500).json({ error: 'Error al leer el archivo .arff' });
@@ -59,9 +36,14 @@ router.post('/', upload.single('file'), (req, res) => {
         const parts = line.trim().split(',');
         if (parts.length < 4) return;
 
-        const sexo = safeGet(sexos, parts[0].trim());
-        const raza = safeGet(razas, parts[1].trim());
-        const color = safeGet(colores, parts[2].trim());
+        // Normalizar sexo
+        const rawSexo = parts[0].trim().toLowerCase();
+        let sexo = 'Desconocido';
+        if (rawSexo === '0' || rawSexo === 'female') sexo = 'Female';
+        else if (rawSexo === '1' || rawSexo === 'male') sexo = 'Male';
+
+        const raza = razas[parseInt(parts[1])] || 'Desconocido';
+        const color = colores[parseInt(parts[2])] || 'Desconocido';
 
         stats.total++;
         stats.sexCount[sexo] = (stats.sexCount[sexo] || 0) + 1;
