@@ -6,9 +6,33 @@ const iconv = require('iconv-lite');
 const multer = require('multer');
 const fs = require('fs');
 
+// Arrays de mapeo
+const razas = [
+  'Russian Blue', 'Norwegian Forest', 'Chartreux', 'Persian', 'Ocicat',
+  'Ragdoll', 'Abyssinian', 'Oriental', 'Egyptian Mau', 'American Shorthair',
+  'Bengal', 'Cornish Rex', 'British Shorthair', 'Burmese', 'Singapura',
+  'Maine Coon', 'Turkish Angora', 'Himalayan', 'Sphynx', 'Manx', 'Birman',
+  'Siberian'
+];
+
+const colores = [
+  'Tortoiseshell', 'Brown', 'Sable', 'Tabby', 'Blue', 'Calico', 'White',
+  'Black', 'Red', 'Pointed', 'Tricolor', 'Cream'
+];
+
+const sexos = ['Female', 'Male'];
+
+// Función auxiliar para obtener un valor seguro desde un array
+function safeGet(array, value) {
+  const index = parseInt(value);
+  return array.includes(value)
+    ? value
+    : (!isNaN(index) && array[index]) || 'Desconocido';
+}
+
 const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
 
-router.post('/', upload.single('archivoArff'), (req, res) => {
+router.post('/', upload.single('file'), (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No se ha subido ningún archivo .arff' });
   }
@@ -19,43 +43,45 @@ router.post('/', upload.single('archivoArff'), (req, res) => {
 
   fs.rename(tempPath, finalPath, (err) => {
     if (err) {
-      console.error('Error al mover el archivo:', err);
       return res.status(500).json({ error: 'Error al preparar el archivo .arff' });
     }
 
-    // Leer archivo ARFF para estadísticas
     fs.readFile(finalPath, 'utf8', (err, data) => {
-      if (err) {
-        console.error('Error leyendo el archivo ARFF:', err);
-        return res.status(500).json({ error: 'Error al leer el archivo .arff' });
-      }
+      if (err) return res.status(500).json({ error: 'Error al leer el archivo .arff' });
 
-      const lines = data.split('\n').filter(line => !line.startsWith('%') && !line.startsWith('@'));
-      const stats = {
-        total: 0,
-        sexCount: {},
-        breedCount: {},
-        colorCount: {}
-      };
+      const lines = data.split('\n').filter(line =>
+        !line.startsWith('%') && !line.startsWith('@') && line.trim() !== ''
+      );
+
+      const stats = { total: 0, sexCount: {}, breedCount: {}, colorCount: {} };
 
       lines.forEach(line => {
         const parts = line.trim().split(',');
-        if (parts.length < 4) return; // evitar errores si hay líneas vacías
+        if (parts.length < 4) return;
 
-        const sexo = parts[0];
-        const raza = parts[1];
-        const color = parts[2];
+        const sexo = safeGet(sexos, parts[0].trim());
+        const raza = safeGet(razas, parts[1].trim());
+        const color = safeGet(colores, parts[2].trim());
 
         stats.total++;
-
         stats.sexCount[sexo] = (stats.sexCount[sexo] || 0) + 1;
         stats.breedCount[raza] = (stats.breedCount[raza] || 0) + 1;
         stats.colorCount[color] = (stats.colorCount[color] || 0) + 1;
       });
 
       const sexoPorcentajes = {};
-      for (const sexo in stats.sexCount) {
-        sexoPorcentajes[sexo] = ((stats.sexCount[sexo] / stats.total) * 100).toFixed(2) + '%';
+      for (const s in stats.sexCount) {
+        sexoPorcentajes[s] = ((stats.sexCount[s] / stats.total) * 100).toFixed(2) + '%';
+      }
+
+      const razaPorcentajes = {};
+      for (const r in stats.breedCount) {
+        razaPorcentajes[r] = ((stats.breedCount[r] / stats.total) * 100).toFixed(2) + '%';
+      }
+
+      const colorPorcentajes = {};
+      for (const c in stats.colorCount) {
+        colorPorcentajes[c] = ((stats.colorCount[c] / stats.total) * 100).toFixed(2) + '%';
       }
 
       const razaMasAdoptada = Object.entries(stats.breedCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
@@ -63,35 +89,56 @@ router.post('/', upload.single('archivoArff'), (req, res) => {
 
       const javaProcess = spawn('java', [
         '-cp', process.platform === 'win32' ? 'weka.jar;mtj-0.9.14.jar;.' : 'weka.jar:mtj-0.9.14.jar:.',
-        'Predictor',
-        'modelo.model',
-        'entrada.arff'
+        'Predictor', 'modelo.model', 'entrada.arff'
       ], { cwd: wekaPath });
 
       let output = '';
-      javaProcess.stdout.on('data', (data) => {
+      javaProcess.stdout.on('data', data => {
         output += iconv.decode(data, 'windows-1252');
       });
 
-      javaProcess.stderr.on('data', (data) => {
+      javaProcess.stderr.on('data', data => {
         console.error(`stderr: ${data}`);
       });
 
-      javaProcess.on('close', (code) => {
+      javaProcess.on('close', code => {
         if (code === 0) {
-          const resultado = output
-            .split('\r\n')
-            .filter(line => line.trim() !== '');
+          const lineas = output.split('\r\n').filter(line => line.trim() !== '');
+          const resultados = [];
+          const conteoSexo = { Male: 0, Female: 0 };
 
-            res.json({
-              resultado,
-              estadisticas: {
-                porcentajePorSexo: sexoPorcentajes,
-                razaMasAdoptada: razaMasAdoptada,
-                colorComunNombre: colorMasComun
-              }
-            });
-            
+          lineas.forEach(line => {
+            const match = line.match(/Predicción:\s*(\d+),\s*(\d+),\s*(\d+)/);
+            if (match) {
+              const [_, razaIdx, colorIdx, sexoIdx] = match.map(Number);
+              const raza = razas[razaIdx] || 'Desconocido';
+              const color = colores[colorIdx] || 'Desconocido';
+              const sexo = sexos[sexoIdx] || 'Desconocido';
+
+              resultados.push({ raza, color, sexo });
+
+              if (sexo === 'Male') conteoSexo.Male++;
+              else if (sexo === 'Female') conteoSexo.Female++;
+            }
+          });
+
+          const totalPred = conteoSexo.Male + conteoSexo.Female;
+          const porcentajeSexoPred = {
+            Male: totalPred ? ((conteoSexo.Male / totalPred) * 100).toFixed(1) + '%' : '0%',
+            Female: totalPred ? ((conteoSexo.Female / totalPred) * 100).toFixed(1) + '%' : '0%'
+          };
+
+          res.json({
+            predicciones: resultados,
+            estadisticas: {
+              porcentajePorSexo: sexoPorcentajes,
+              porcentajePorSexoPredicho: porcentajeSexoPred,
+              porcentajePorRaza: razaPorcentajes,
+              porcentajePorColor: colorPorcentajes,
+              razaMasAdoptada: razaMasAdoptada,
+              colorMasComun: colorMasComun
+            }
+          });
         } else {
           res.status(500).json({ error: 'Error ejecutando el predictor' });
         }
@@ -101,9 +148,3 @@ router.post('/', upload.single('archivoArff'), (req, res) => {
 });
 
 module.exports = router;
-
-
-
-
-
-

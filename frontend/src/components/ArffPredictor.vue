@@ -1,73 +1,130 @@
 <template>
-  <div class="p-6">
-    <h1 class="text-xl font-bold mb-4">Subir archivo ARFF para predicción</h1>
+  <div class="p-6 max-w-3xl mx-auto text-white">
+    <h2 class="text-2xl font-bold mb-4 flex items-center gap-2">
+      📊 Resultado de la Predicción
+    </h2>
 
-    <!-- Formulario de carga -->
-    <form @submit.prevent="enviarArchivo">
-      <input type="file" @change="handleFileChange" accept=".arff" class="mb-4" />
-      <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Enviar</button>
-    </form>
-
-    <!-- Estadísticas -->
-    <div v-if="estadisticas" class="mt-6 bg-gray-100 p-4 rounded shadow">
-      <h2 class="text-lg font-semibold mb-2">Estadísticas:</h2>
-      <div v-if="estadisticas.porcentajePorSexo">
-        <div v-for="(valor, sexo) in estadisticas.porcentajePorSexo" :key="sexo">
-          <p><strong>{{ sexo }}:</strong> {{ valor }}</p>
-        </div>
-      </div>
-      <p><strong>🐱 Raza más adoptada:</strong> {{ estadisticas.razaMasAdoptada }}</p>
-      <p><strong>🎨 Color más común:</strong> {{ estadisticas.colorComunNombre }}</p>
-    </div>
-
-    <!-- Resultados de la predicción -->
-    <div v-if="resultado.length" class="mt-6">
-      <h2 class="text-lg font-semibold">Resultados de la predicción:</h2>
-      <ul class="list-disc ml-6 mt-2">
-        <li v-for="(linea, index) in resultado" :key="index">{{ linea }}</li>
+    <div v-if="resultado && Object.keys(estadisticas.porcentajePorRaza).length">
+      <h3 class="text-xl font-semibold mt-4">Sexo (%):</h3>
+      <ul class="ml-4">
+        <li>♂️ Male: {{ estadisticas.porcentajePorSexo.Male || '0%' }}</li>
+        <li>♀️ Female: {{ estadisticas.porcentajePorSexo.Female || '0%' }}</li>
       </ul>
+
+      <h3 class="text-xl font-semibold mt-4">Razas (%):</h3>
+      <ul class="ml-4">
+        <li v-for="(valor, raza) in estadisticas.porcentajePorRaza" :key="raza">
+          🐾 {{ raza }}: {{ valor }}
+        </li>
+      </ul>
+
+      <h3 class="text-xl font-semibold mt-4">Colores (%):</h3>
+      <ul class="ml-4">
+        <li v-for="(valor, color) in estadisticas.porcentajePorColor" :key="color">
+          🎨 {{ color }}: {{ valor }}
+        </li>
+      </ul>
+
+      <div class="mt-6">
+        <h3 class="text-lg font-bold">🐱 Raza más adoptada:</h3>
+        <p class="ml-4">{{ estadisticas.razaMasAdoptada }}</p>
+      </div>
+
+      <div class="mt-4">
+        <h3 class="text-lg font-bold">🎭 Color más común:</h3>
+        <p class="ml-4">{{ estadisticas.colorMasComun }}</p>
+      </div>
+
+      <!-- Predicciones individuales -->
+      <div class="mt-6">
+        <h3 class="text-xl font-semibold mb-2">Predicciones individuales:</h3>
+        <ul class="ml-4 list-disc">
+          <li v-for="(pred, index) in resultado" :key="index">
+            🐈 Raza: {{ pred.raza }}, 🎨 Color: {{ pred.color }}, ⚧️ Sexo: {{ pred.sexo }}
+          </li>
+        </ul>
+      </div>
     </div>
+
+    <div v-else class="text-gray-300 mt-6 italic">
+      No hay predicción aún. Sube un archivo .arff para comenzar.
+    </div>
+
+    <form @submit.prevent="handleSubmit" class="mt-8">
+      <input
+        type="file"
+        accept=".arff"
+        @change="handleFileChange"
+        class="mb-4 text-black"
+      />
+      <button
+        type="submit"
+        class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded disabled:opacity-50"
+        :disabled="!archivo"
+      >
+        Enviar archivo
+      </button>
+    </form>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
   data() {
     return {
       archivo: null,
-      resultado: [],
-      estadisticas: null
+      resultado: null,
+      estadisticas: {
+        porcentajePorSexo: {},
+        porcentajePorRaza: {},
+        porcentajePorColor: {},
+        razaMasAdoptada: '',
+        colorMasComun: ''
+      }
     };
   },
   methods: {
     handleFileChange(event) {
-      this.archivo = event.target.files[0];
-    },
-    async enviarArchivo() {
-      if (!this.archivo) {
-        alert('Por favor selecciona un archivo .arff');
-        return;
+      const file = event.target.files[0];
+      if (file && file.name.endsWith('.arff')) {
+        this.archivo = file;
+      } else {
+        alert('Por favor selecciona un archivo .arff válido.');
+        this.archivo = null;
       }
+    },
+    async handleSubmit() {
+      if (!this.archivo) return;
 
       const formData = new FormData();
-      formData.append('archivoArff', this.archivo);
+      formData.append('file', this.archivo);
 
       try {
-        const response = await axios.post('http://localhost:5000/api/predictor', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+        const response = await fetch('http://localhost:5000/api/predictor', {
+          method: 'POST',
+          body: formData
         });
 
-        this.resultado = response.data.resultado;
-        this.estadisticas = response.data.estadisticas;
+        const data = await response.json();
+
+        if (response.ok) {
+          this.resultado = data.predicciones; // ahora se llama predicciones, no resultado
+          this.estadisticas = data.estadisticas;
+          console.log('Estadisticas recibidas' , data.estadisticas);
+        } else {
+          alert(data.error || 'Error al procesar el archivo.');
+        }
       } catch (error) {
         console.error('Error al enviar el archivo:', error);
-        alert('Ocurrió un error al enviar el archivo.');
+        alert('Hubo un error al conectar con el servidor.');
       }
     }
   }
 };
 </script>
+
+<style scoped>
+body {
+  background-color: #111827;
+}
+</style>
