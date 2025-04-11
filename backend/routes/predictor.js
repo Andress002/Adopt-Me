@@ -7,8 +7,8 @@ const multer = require('multer');
 const fs = require('fs');
 
 // Arrays de mapeo
-const razas = [ 'Russian Blue', 'Norwegian Forest', 'Chartreux', 'Persian', 'Ocicat', 'Ragdoll', 'Abyssinian', 'Oriental', 'Egyptian Mau', 'American Shorthair', 'Bengal', 'Cornish Rex', 'British Shorthair', 'Burmese', 'Singapura', 'Maine Coon', 'Turkish Angora', 'Himalayan', 'Sphynx', 'Manx', 'Birman', 'Siberian' ];
-const colores = [ 'Tortoiseshell', 'Brown', 'Sable', 'Tabby', 'Blue', 'Calico', 'White', 'Black', 'Red', 'Pointed', 'Tricolor', 'Cream' ];
+const razas = ['Russian Blue', 'Norwegian Forest', 'Chartreux', 'Persian', 'Ragdoll', 'Ocicat', 'Abyssinian', 'Oriental', 'Egyptian Mau', 'American Shorthair', 'Bengal', 'Cornish Rex', 'British Shorthair', 'Burmese', 'Singapura', 'Maine Coon', 'Turkish Angora', 'Himalayan', 'Sphynx', 'Manx', 'Birman', 'Siberian'];
+const colores = ['Tortoiseshell', 'Brown', 'Sable', 'Tabby', 'Blue', 'Calico', 'White', 'Black', 'Red', 'Pointed', 'Tricolor', 'Cream'];
 const sexos = ['Female', 'Male'];
 
 const upload = multer({ dest: path.join(__dirname, '..', 'uploads') });
@@ -30,7 +30,7 @@ router.post('/', upload.single('file'), (req, res) => {
         !line.startsWith('%') && !line.startsWith('@') && line.trim() !== ''
       );
 
-      const stats = { total: 0, sexCount: {}, breedCount: {}, colorCount: {} };
+      const stats = { total: 0, sexCount: {}, breedCount: {}, colorCount: {}, ageSum: 0, ageCount: 0 };
 
       lines.forEach(line => {
         const parts = line.trim().split(',');
@@ -44,11 +44,16 @@ router.post('/', upload.single('file'), (req, res) => {
 
         const raza = razas[parseInt(parts[1])] || 'Desconocido';
         const color = colores[parseInt(parts[2])] || 'Desconocido';
+        const edad = parseFloat(parts[3]) || 0; // Edad
 
         stats.total++;
         stats.sexCount[sexo] = (stats.sexCount[sexo] || 0) + 1;
         stats.breedCount[raza] = (stats.breedCount[raza] || 0) + 1;
         stats.colorCount[color] = (stats.colorCount[color] || 0) + 1;
+
+        // Sumar la edad
+        stats.ageSum += edad;
+        stats.ageCount++;
       });
 
       const sexoPorcentajes = {};
@@ -68,6 +73,8 @@ router.post('/', upload.single('file'), (req, res) => {
 
       const razaMasAdoptada = Object.entries(stats.breedCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
       const colorMasComun = Object.entries(stats.colorCount).sort((a, b) => b[1] - a[1])[0]?.[0] || 'N/A';
+
+      const edadPromedio = stats.ageCount > 0 ? (stats.ageSum / stats.ageCount).toFixed(2) : 'N/A';
 
       const javaProcess = spawn('java', [
         '-cp', process.platform === 'win32' ? 'weka.jar;mtj-0.9.14.jar;.' : 'weka.jar:mtj-0.9.14.jar:.',
@@ -118,7 +125,8 @@ router.post('/', upload.single('file'), (req, res) => {
               porcentajePorRaza: razaPorcentajes,
               porcentajePorColor: colorPorcentajes,
               razaMasAdoptada: razaMasAdoptada,
-              colorMasComun: colorMasComun
+              colorMasComun: colorMasComun,
+              edadPromedio: edadPromedio
             }
           });
         } else {
